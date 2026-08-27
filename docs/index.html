@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSH Remote Web</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#121a2f; --line:#263452; --text:#e8eefc; --muted:#a8b5d1; --accent:#8ab4ff; }
+    * { box-sizing:border-box; } body { margin:0; background:linear-gradient(135deg,#0b1020,#111a30); color:var(--text); font:16px/1.65 system-ui,-apple-system,Segoe UI,sans-serif; }
+    main { max-width:980px; margin:0 auto; padding:64px 24px 96px; } h1,h2 { line-height:1.2; } h1 { font-size:clamp(2.4rem,6vw,4.8rem); margin:0 0 16px; } h2 { margin-top:48px; } p { color:var(--muted); } a { color:var(--accent); } .eyebrow { color:var(--accent); font-weight:700; letter-spacing:.12em; text-transform:uppercase; } .lead { font-size:1.25rem; max-width:760px; } .panel { border:1px solid var(--line); background:rgba(18,26,47,.88); border-radius:16px; padding:24px; margin:24px 0; } code,pre { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; } pre { overflow:auto; border:1px solid var(--line); background:#080d19; border-radius:10px; padding:18px; color:#d7e3ff; } table { width:100%; border-collapse:collapse; } th,td { border-bottom:1px solid var(--line); text-align:left; vertical-align:top; padding:12px 8px; } th { color:var(--text); } td { color:var(--muted); } .warning { border-left:4px solid #ffb86b; } footer { margin-top:64px; color:var(--muted); font-size:.9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">DeepSeek Harness distribution</div>
+  <h1>DSH Remote Web</h1>
+  <p class="lead">Install the modified Harness from scratch and operate it through one browser interface. The product adds centralized open authority, host-backed remote settings, and a web-native configuration editor.</p>
+  <section class="panel warning"><strong>Authority model.</strong><p>Every caller who can reach the service is treated as an authorized host user. Use a private network, firewall, or identity-aware proxy before exposing it beyond a trusted environment.</p></section>
+  <h2>Install</h2>
+  <pre><code>curl -fsSL https://raw.githubusercontent.com/kenqtade/dsh-remote-web/main/install.sh -o install.sh
+chmod +x install.sh
+BUILD=1 ./install.sh "$HOME/dsh-remote-web"</code></pre>
+  <h2>Run the browser interface</h2>
+  <pre><code>cd "$HOME/dsh-remote-web"
+pnpm dsh web --host 0.0.0.0 --open-authority --no-open</code></pre>
+  <p>Open port <code>3080</code> in a trusted browser or forward it through a secure tunnel. For temporary testing, run <code>cloudflared tunnel --url http://127.0.0.1:3080</code>.</p>
+  <h2>Remote capability matrix</h2>
+  <table><thead><tr><th>Capability</th><th>Browser behavior</th></tr></thead><tbody>
+    <tr><td>Settings and configuration</td><td>In-page YAML editor reads and writes the host-owned settings document.</td></tr>
+    <tr><td>Provider and plugin configuration</td><td>Host-backed settings forms remain available to the remote browser.</td></tr>
+    <tr><td>Workspace selection</td><td>Remote filesystem browser lists directories and creates folders on the Harness host.</td></tr>
+    <tr><td>Sessions, approvals, questions, and results</td><td>Rendered in the web application through the shared RPC transport.</td></tr>
+    <tr><td>Desktop dialogs</td><td>Not launched for the web editor; server desktop windows cannot be displayed in a remote browser.</td></tr>
+  </tbody></table>
+  <h2>Architecture</h2>
+  <p>The patch changes the core connection and ApiProxy policy rather than adding exceptions to individual API routes. The browser receives an explicit server authority marker, and the settings layer chooses host-backed state from that marker even when the page is not loopback.</p>
+  <h2>Source and reproducibility</h2>
+  <p>The installer pins the official upstream commit recorded in <code>UPSTREAM-COMMIT.txt</code> and applies <code>patches/open-authority-web-only.patch</code>. The active base composition does not mount the DeepSeek provider; its source package remains available for intentional overlays.</p>
+  <footer><a href="../README.md">README</a> · <a href="https://github.com/deepseek-ai/deepseek-harness">Official upstream Harness</a></footer>
+</main>
+</body>
+</html>
