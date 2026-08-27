@@ -9,7 +9,7 @@
 The installer clones the official Harness at the pinned upstream commit, applies the reviewed patch, installs the workspace dependencies, and builds the client, host, and web assets.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kenqtade/dsh-remote-web/main/install.sh -o install.sh
+curl -fsSL https://raw.githubusercontent.com/DHS-M/dsh-remote-web/main/install.sh -o install.sh
 chmod +x install.sh
 BUILD=1 ./install.sh "$HOME/dsh-remote-web"
 cd "$HOME/dsh-remote-web"
